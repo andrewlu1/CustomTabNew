@@ -13,7 +13,7 @@ import android.support.customtabs.CustomTabsSession;
 import java.util.ArrayList;
 
 /**
- * Created by Administrator on 2016/3/9.
+ * Created by andrewlu on 2016/3/9.
  * 通过Intent提取可控参数内容.
  */
 public class CustomTabsProperties {

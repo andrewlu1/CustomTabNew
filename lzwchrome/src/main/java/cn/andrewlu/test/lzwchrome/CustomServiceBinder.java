@@ -10,7 +10,7 @@ import android.util.Log;
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/3/9.
+ * Created by andrewlu on 2016/3/9.
  * 用于实际处理CustomTab业务的位置.
  */
 public class CustomServiceBinder extends ICustomTabsService.Stub {
