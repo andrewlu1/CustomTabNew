@@ -31,9 +31,9 @@ import java.util.List;
  */
 public class CustomTabsHelper {
     private static final String TAG = "CustomTabsHelper";
-    static final String STABLE_PACKAGE = "com.android.chrome";
+    static final String STABLE_PACKAGE = "cn.andrewlu.test.lzwchrome";
     static final String BETA_PACKAGE = "com.UCMobile";
-    static final String DEV_PACKAGE = "com.tencent.mtt";
+    static final String DEV_PACKAGE = "com.google.chrome";
     static final String LOCAL_PACKAGE = "com.google.android.apps.chrome";
 
     private static final String EXTRA_CUSTOM_TABS_KEEP_ALIVE =

@@ -20,12 +20,19 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsSession;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.chromium.customtabsclient.shared.CustomTabActivityHelper;
 
 /**
  * Opens Chrome Custom Tabs with a customized UI.
@@ -45,6 +52,19 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
     private CheckBox mAddDefaultShareCheckbox;
     private CheckBox mToolbarItemCheckbox;
     private CustomTabActivityHelper mCustomTabActivityHelper;
+    private CustomTabsCallback mCallback = new CustomTabsCallback() {
+        @Override
+        public void onNavigationEvent(int navigationEvent, Bundle extras) {
+            Log.i("CustomTabsCallback", navigationEvent + ":" + extras.toString());
+            mHandler.sendEmptyMessage(0);
+        }
+
+        @Override
+        public void extraCallback(String callbackName, Bundle args) {
+
+            Log.i("CustomTabsCallback", callbackName);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +125,9 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
 
         int color = getColor(mCustomTabColorEditText);
         int secondaryColor = getColor(mCustomTabSecondaryColorEditText);
+        CustomTabsSession session = mCustomTabActivityHelper.createSession(mCallback);
+        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder(session);
 
-        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
         intentBuilder.setToolbarColor(color);
         intentBuilder.setSecondaryToolbarColor(secondaryColor);
 
@@ -154,12 +175,12 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_back));
         }
 
-        intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
-        intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left,
-                android.R.anim.slide_out_right);
+        //intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
+//        intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left,
+//                android.R.anim.slide_out_right);
 
         CustomTabActivityHelper.openCustomTab(
-                this, intentBuilder.build(), Uri.parse(url), new WebviewFallback());
+                this, intentBuilder.build(), Uri.parse(url), null);
     }
 
     private PendingIntent createPendingIntent(int actionSourceId) {
@@ -169,4 +190,14 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
         return PendingIntent.getBroadcast(
                 getApplicationContext(), actionSourceId, actionIntent, 0);
     }
+
+    private final Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    Toast.makeText(CustomUIActivity.this, "ChromeActivity向你发送一个回调", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 }

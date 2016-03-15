@@ -1,14 +1,12 @@
-package cn.andrewlu.test.lzwchrome;
+package cn.andrewlu.test.lzwchrome.entities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.annotation.ColorInt;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.customtabs.CustomTabsSession;
+import android.support.customtabs.CustomTabsSessionToken;
 
 import java.util.ArrayList;
 
@@ -26,8 +24,8 @@ public class CustomTabsProperties {
         buildProperties(intent);
     }
 
-    public Bundle getSession() {
-        return session;
+    public CustomTabsSessionToken getToken() {
+        return token;
     }
 
     public int getToolbarColor() {
@@ -82,7 +80,9 @@ public class CustomTabsProperties {
     private void buildProperties(Intent intent) {
         if (intent == null) return;
         this.data = intent.getData();
-        this.session = intent.getBundleExtra(CustomTabsIntent.EXTRA_SESSION);
+        if (intent.hasExtra(CustomTabsIntent.EXTRA_SESSION)) {
+            this.token = CustomTabsSessionToken.getSessionTokenFromIntent(intent);
+        }
         this.toolbarColor = intent.getIntExtra(CustomTabsIntent.EXTRA_TOOLBAR_COLOR, Color.BLUE);
         this.secondaryToolbarColor = intent.getIntExtra(CustomTabsIntent.EXTRA_SECONDARY_TOOLBAR_COLOR, Color.WHITE);
         this.enableUrlBarHiding = intent.getBooleanExtra(CustomTabsIntent.EXTRA_ENABLE_URLBAR_HIDING, false);
@@ -96,7 +96,7 @@ public class CustomTabsProperties {
         this.actionBarBundle = intent.getBundleExtra(CustomTabsIntent.EXTRA_ACTION_BUTTON_BUNDLE);
     }
 
-    private Bundle session;
+    private CustomTabsSessionToken token;
     private int toolbarColor;
     private int secondaryToolbarColor;
     private boolean enableUrlBarHiding;

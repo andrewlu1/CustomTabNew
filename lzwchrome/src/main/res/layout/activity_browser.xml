@@ -4,36 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refreshLayout"
+    <FrameLayout
+        android:id="@+id/webViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <WebView
-            android:id="@+id/webView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></WebView>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:background="@android:color/white"></FrameLayout>
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="#99ccaa">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
+            android:clipToPadding="true"
+            android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
             app:subtitleTextColor="@android:color/white"
             app:title=" "
-            app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+            app:titleTextColor="@android:color/white">
 
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
 </android.support.design.widget.CoordinatorLayout>
