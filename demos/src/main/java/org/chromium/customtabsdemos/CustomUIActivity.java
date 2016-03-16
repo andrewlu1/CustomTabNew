@@ -143,10 +143,13 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if (mAddMenusCheckbox.isChecked()) {
-            String menuItemTitle = getString(R.string.menu_item_title);
-            PendingIntent menuItemPendingIntent =
-                    createPendingIntent(ActionBroadcastReceiver.ACTION_MENU_ITEM);
-            intentBuilder.addMenuItem(menuItemTitle, menuItemPendingIntent);
+            for (int i = 0; i < 5; i++) {
+                String menuItemTitle = getString(R.string.menu_item_title) + i;
+                PendingIntent menuItemPendingIntent =
+                        createPendingIntent(ActionBroadcastReceiver.ACTION_MENU_ITEM);
+                intentBuilder.addMenuItem(menuItemTitle, menuItemPendingIntent);
+            }
+
         }
 
         if (mAddDefaultShareCheckbox.isChecked()) {
@@ -176,8 +179,8 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
         }
 
         //intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
-//        intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left,
-//                android.R.anim.slide_out_right);
+        intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right);
 
         CustomTabActivityHelper.openCustomTab(
                 this, intentBuilder.build(), Uri.parse(url), null);
@@ -187,6 +190,7 @@ public class CustomUIActivity extends AppCompatActivity implements View.OnClickL
         Intent actionIntent = new Intent(
                 this.getApplicationContext(), ActionBroadcastReceiver.class);
         actionIntent.putExtra(ActionBroadcastReceiver.KEY_ACTION_SOURCE, actionSourceId);
+        actionIntent.setData(Uri.parse("http://www.uc.cn"));
         return PendingIntent.getBroadcast(
                 getApplicationContext(), actionSourceId, actionIntent, 0);
     }

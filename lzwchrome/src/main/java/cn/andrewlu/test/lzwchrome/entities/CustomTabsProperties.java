@@ -1,5 +1,6 @@
 package cn.andrewlu.test.lzwchrome.entities;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsSessionToken;
+import android.view.Menu;
 
 import java.util.ArrayList;
 
@@ -48,16 +50,35 @@ public class CustomTabsProperties {
         return showTitle;
     }
 
-    public ArrayList<Bundle> getMenuItems() {
+    public ArrayList<MenuItemParam> getMenuItems() {
         return menuItems;
+    }
+
+    public MenuItemParam getMenuItem(int menuId) {
+        if (menuItems != null)
+            for (MenuItemParam param : menuItems) {
+                if (menuId == param.getMenuId()) {
+                    return param;
+                }
+            }
+        return null;
     }
 
     public Bundle getExitAnimationBundle() {
         return exitAnimationBundle;
     }
 
-    public ArrayList<Bundle> getActionButtons() {
+    public ArrayList<ActionBtnParam> getActionButtons() {
         return actionButtons;
+    }
+
+    public ActionBtnParam getActionButton(int id) {
+        for (ActionBtnParam p : actionButtons) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public boolean isShowDefaultShareMenuItem() {
@@ -88,8 +109,28 @@ public class CustomTabsProperties {
         this.enableUrlBarHiding = intent.getBooleanExtra(CustomTabsIntent.EXTRA_ENABLE_URLBAR_HIDING, false);
         this.closeButtonIcon = intent.getParcelableExtra(CustomTabsIntent.EXTRA_CLOSE_BUTTON_ICON);
         this.showTitle = intent.getIntExtra(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE, 0) == 1 ? true : false;
-        this.menuItems = intent.getParcelableArrayListExtra(CustomTabsIntent.EXTRA_MENU_ITEMS);
-        this.actionButtons = intent.getParcelableArrayListExtra(CustomTabsIntent.EXTRA_TOOLBAR_ITEMS);
+
+        ArrayList<Bundle> items = intent.getParcelableArrayListExtra(CustomTabsIntent.EXTRA_MENU_ITEMS);
+        if (items != null)
+            for (Bundle item : items) {
+                MenuItemParam param = new MenuItemParam();
+                param.setMenuText(item.getString(CustomTabsIntent.KEY_MENU_ITEM_TITLE));
+                param.setPendingIntent((PendingIntent) item.getParcelable(CustomTabsIntent.KEY_PENDING_INTENT));
+                menuItems.add(param);
+            }
+
+        ArrayList<Bundle> actionBtns = intent.getParcelableArrayListExtra(CustomTabsIntent.EXTRA_TOOLBAR_ITEMS);
+        if (actionBtns != null) {
+            for (Bundle actionBtn : actionBtns) {
+                ActionBtnParam p = new ActionBtnParam();
+                p.setId(actionBtn.getInt(CustomTabsIntent.KEY_ID));
+                p.setIcon((Bitmap) actionBtn.getParcelable(CustomTabsIntent.KEY_ICON));
+                p.setLabel(actionBtn.getString(CustomTabsIntent.KEY_DESCRIPTION));
+                p.setPendingIntent((PendingIntent) actionBtn.getParcelable(CustomTabsIntent.KEY_PENDING_INTENT));
+                this.actionButtons.add(p);
+            }
+        }
+
         this.exitAnimationBundle = intent.getBundleExtra(CustomTabsIntent.EXTRA_EXIT_ANIMATION_BUNDLE);
         this.showDefaultShareMenuItem = intent.getBooleanExtra(CustomTabsIntent.EXTRA_DEFAULT_SHARE_MENU_ITEM, false);
         this.tintActionBar = intent.getBooleanExtra(CustomTabsIntent.EXTRA_TINT_ACTION_BUTTON, false);
@@ -102,10 +143,10 @@ public class CustomTabsProperties {
     private boolean enableUrlBarHiding;
     private Bitmap closeButtonIcon;
     private boolean showTitle;
-    ArrayList<Bundle> menuItems;
+    ArrayList<MenuItemParam> menuItems = new ArrayList<MenuItemParam>();
     // private Bundle startAnimationBundle;
     private Bundle exitAnimationBundle;
-    private ArrayList<Bundle> actionButtons;
+    private ArrayList<ActionBtnParam> actionButtons = new ArrayList<ActionBtnParam>();
     private boolean showDefaultShareMenuItem;
     private boolean tintActionBar;
     private Bundle actionBarBundle;

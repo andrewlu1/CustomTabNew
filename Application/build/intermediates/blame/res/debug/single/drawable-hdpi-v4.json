@@ -164,12 +164,12 @@
         "source": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-hdpi-v4\\abc_btn_rating_star_off_mtrl_alpha.png"
     },
     {
-        "merged": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\abc_btn_radio_off_mtrl.png",
-        "source": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\generated\\res\\pngs\\debug\\drawable-hdpi\\abc_btn_radio_off_mtrl.png"
-    },
-    {
         "merged": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\abc_scrubber_control_to_pressed_mtrl_005.png",
         "source": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-hdpi-v4\\abc_scrubber_control_to_pressed_mtrl_005.png"
+    },
+    {
+        "merged": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\abc_btn_radio_off_mtrl.png",
+        "source": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\generated\\res\\pngs\\debug\\drawable-hdpi\\abc_btn_radio_off_mtrl.png"
     },
     {
         "merged": "D:\\ws-private\\custom-tabs-client-master\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\abc_popup_background_mtrl_mult.9.png",

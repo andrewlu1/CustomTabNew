@@ -25,7 +25,7 @@ public class ALCustomTabService extends CustomTabsService {
     @Override
     protected boolean warmup(long flags) {
         Log.i("ALCustomTabService", "warmup");
-        WebViewProvider.getInstance().warmup(3);
+        WebViewProvider.getInstance().warmup(1);
         return true;
     }
 

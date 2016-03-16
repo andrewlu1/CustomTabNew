@@ -12,4 +12,8 @@
     <style name="AppTheme" parent="@style/BaseAppTheme">
 
     </style>
+
+    <style name="AppTheme.Overlayer" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    </style>
 </resources>

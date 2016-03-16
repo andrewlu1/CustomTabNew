@@ -1,25 +1,28 @@
 package cn.andrewlu.test.lzwchrome;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
+import cn.andrewlu.test.lzwchrome.entities.ActionBtnParam;
 import cn.andrewlu.test.lzwchrome.entities.CustomTabsProperties;
+import cn.andrewlu.test.lzwchrome.entities.MenuItemParam;
 
 /**
  * Created by Andrewlu.lzw on 2016/3/8.
@@ -52,7 +55,9 @@ public class ChromeActivity extends AppCompatActivity {
                 //设置页面进入/退出时的动画效果.
                 //overridePendingTransition(0,0);
                 finish();
-                callback.onNavigationEvent(CustomTabsCallback.NAVIGATION_ABORTED, new Bundle());
+                if (callback != null) {
+                    callback.onNavigationEvent(CustomTabsCallback.NAVIGATION_ABORTED, new Bundle());
+                }
             }
         });
 
@@ -67,9 +72,20 @@ public class ChromeActivity extends AppCompatActivity {
                     mWebView = webView;
                     boolean isShowTitle = properties.isShowTitle();
                     if (isShowTitle) {
-                        //获取到网页的标题信息.
-                        toolBar.setTitle(mWebView.getTitle());
-                        toolBar.setSubtitle(properties.getData().toString());
+                        if (mWebView.getTitle() == null || mWebView.getTitle().isEmpty()) {
+                            mWebView.setWebChromeClient(new WebChromeClient() {
+                                @Override
+                                public void onReceivedTitle(WebView view, String title) {
+                                    toolBar.setTitle(mWebView.getTitle());
+                                    toolBar.setSubtitle(properties.getData().toString());
+                                }
+                            });
+                        } else {
+                            //获取到网页的标题信息.
+                            toolBar.setTitle(mWebView.getTitle());
+                            toolBar.setSubtitle(properties.getData().toString());
+                        }
+                        //toolBar.setSubtitle(properties.getData().toString());
                     } else {
                         toolBar.setTitle(properties.getData().toString());
                         toolBar.setSubtitle(null);
@@ -96,32 +112,30 @@ public class ChromeActivity extends AppCompatActivity {
             toolBar.setNavigationIcon(new BitmapDrawable(getResources(), closeBtnIcon));
         }
 
-        //设置菜单.
-        if (properties.getMenuItems() != null && !properties.getMenuItems().isEmpty()) {
-            //toolBar.inflateMenu(R.menu.menu_more);
-            toolBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    Toast.makeText(ChromeActivity.this, "xxxxx", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            });
-        }
+        //toolBar.setMenu(builder, null);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // getMenuInflater().inflate(R.menu.menu_more, menu);
+
+        for (ActionBtnParam p : properties.getActionButtons()) {
+            menu.add(0, p.getId(), p.getId(), p.getLabel())
+                    .setIcon(new BitmapDrawable(getResources(), p.getIcon()))
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+
+        if (properties.isShowDefaultShareMenuItem()) {
+            menu.add(0, -1, 0, R.string.app_share_text).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        }
+
         if (properties.getMenuItems() != null) {
-            // int i = 0;
-            for (Bundle bundle : properties.getMenuItems()) {
-                MenuItem item = menu.add(bundle.getString(CustomTabsIntent.KEY_MENU_ITEM_TITLE));
-//                PendingIntent intent = bundle.getParcelable(CustomTabsIntent.KEY_PENDING_INTENT);
-//                item.setIntent(intent);
+            int i = 0;
+            for (MenuItemParam bundle : properties.getMenuItems()) {
+                menu.add(0, bundle.getMenuId(), i++, bundle.getMenuText()).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             }
         }
+
         return true;
     }
 
@@ -131,7 +145,41 @@ public class ChromeActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        MenuItemParam p = properties.getMenuItem(id);
+        if (p != null) {
+            PendingIntent pendingIntent = p.getPendingIntent();
+            try {
+                pendingIntent.send();
+            } catch (PendingIntent.CanceledException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        ActionBtnParam param = properties.getActionButton(id);
+        if (param != null) {
+            try {
+                param.getPendingIntent().send();
+            } catch (PendingIntent.CanceledException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
 
+        //default share menu.
+        if (id == -1) {
+            showDefaultShareMenu();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDefaultShareMenu() {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.putExtra(Intent.EXTRA_TEXT, properties.getData().toString());
+        startActivity(Intent.createChooser(i, "分享到:"));
+    }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
