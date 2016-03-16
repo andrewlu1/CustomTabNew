@@ -91,7 +91,8 @@ public class WebViewProvider {
         taskController.autoPost(new Runnable() {
             @Override
             public void run() {
-                WebView webView = new NestedScrollWebView(App.getApplication());
+//                WebView webView = new NestedScrollWebView(App.getApplication());
+                WebView webView = new WebView(App.getApplication());
                 setupWebView(webView);
                 webView.loadUrl(url);
                 if (webViewCreator != null) webViewCreator.onWebViewCreated(webView);
